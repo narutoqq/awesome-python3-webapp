@@ -6,14 +6,10 @@ from datetime import datetime
 def index(request):
 	return web.Response(body=b'<h1>Awesome</h1>',headers={'content-type':'text/html'})
 
-@asyncio.coroutine
-def init(loop):
-	app = web.Application(loop=loop)
-	app.router.add_route('GET', '/', index)
-	srv = yield from loop.create_server(app.make_handler(), '0.0.0.0', 9000)
+def init():
+	app = web.Application()
+	app.add_routes([web.get('/', index)])
 	logging.info('server started ...')
-	return srv
+	web.run_app(app, host='0.0.0.0', port=9000)
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(init(loop))
-loop.run_forever()
+init()
